@@ -1,0 +1,9 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#define NUM_OF_CBS 8
+#define NUM_OF_GROUPS 8
+#define ADC_TEMP_SHUTDOWN 105
+#define ADC_TEMP_WARNING 85
+
+#endif // CONSTANTS_H
