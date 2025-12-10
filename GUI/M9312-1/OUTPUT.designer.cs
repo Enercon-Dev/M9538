@@ -1,4 +1,4 @@
-﻿namespace M9811_1
+﻿namespace M9538
 {
     partial class OUTPUT
     {
@@ -46,7 +46,7 @@
             this.lblVout = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblTemp = new System.Windows.Forms.Label();
-            this.btnswitch = new M9811_1.Switch.Switch();
+            this.btnswitch = new Switch.Switch();
             this.tableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();

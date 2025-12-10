@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Tftp.Net;
 
-namespace M9811_1
+namespace M9538
 {
     partial class Form1
     {
@@ -50,22 +50,22 @@ namespace M9811_1
             this.lblInCurr = new System.Windows.Forms.Label();
             this.lblTemp = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.sspc1 = new M9811_1.OUTPUT();
-            this.output1 = new M9811_1.OUTPUT();
-            this.output2 = new M9811_1.OUTPUT();
-            this.output3 = new M9811_1.OUTPUT();
-            this.output4 = new M9811_1.OUTPUT();
-            this.output5 = new M9811_1.OUTPUT();
-            this.output6 = new M9811_1.OUTPUT();
-            this.output7 = new M9811_1.OUTPUT();
-            this.group1 = new M9811_1.GROUP();
-            this.group2 = new M9811_1.GROUP();
-            this.group3 = new M9811_1.GROUP();
-            this.group4 = new M9811_1.GROUP();
-            this.group5 = new M9811_1.GROUP();
-            this.group6 = new M9811_1.GROUP();
-            this.group7 = new M9811_1.GROUP();
-            this.group8 = new M9811_1.GROUP();
+            this.sspc1 = new OUTPUT();
+            this.output1 = new OUTPUT();
+            this.output2 = new OUTPUT();
+            this.output3 = new OUTPUT();
+            this.output4 = new OUTPUT();
+            this.output5 = new OUTPUT();
+            this.output6 = new OUTPUT();
+            this.output7 = new OUTPUT();
+            this.group1 = new GROUP();
+            this.group2 = new GROUP();
+            this.group3 = new GROUP();
+            this.group4 = new GROUP();
+            this.group5 = new GROUP();
+            this.group6 = new GROUP();
+            this.group7 = new GROUP();
+            this.group8 = new GROUP();
             this.tpConfig = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.dgvLimits = new System.Windows.Forms.DataGridView();

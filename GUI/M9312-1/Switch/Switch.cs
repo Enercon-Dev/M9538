@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace M9811_1.Switch
+namespace Switch
 {
     public partial class Switch : Button
     {

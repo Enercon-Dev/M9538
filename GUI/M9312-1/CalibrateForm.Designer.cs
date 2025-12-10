@@ -1,4 +1,4 @@
-﻿namespace M9811_1
+﻿namespace M9538
 {
     partial class CalibrateForm
     {

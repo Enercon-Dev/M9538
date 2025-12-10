@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{189A3682-C156-4CC2-8E6F-AD3BDA0A675A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>M9811_1</RootNamespace>
-    <AssemblyName>M9811_1</AssemblyName>
+    <RootNamespace>M9538</RootNamespace>
+    <AssemblyName>M9538</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -62,7 +62,7 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>M9811_1.Program</StartupObject>
+    <StartupObject>M9538.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="IPAddressControlLib, Version=1.2.4446.28646, Culture=neutral, PublicKeyToken=64ca5a4287aa7107, processorArchitecture=MSIL">
@@ -96,17 +96,11 @@
       <DependentUpon>CalibrateForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Data\LimitDataSource.cs" />
-    <Compile Include="Installer.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Installer.Designer.cs">
-      <DependentUpon>Installer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Led.cs">
+    <Compile Include="Data\Led.cs">
       <SubType>Component</SubType>
       <CustomToolNamespace>M1654_1</CustomToolNamespace>
     </Compile>
-    <Compile Include="Led.Designer.cs">
+    <Compile Include="Data\Led.Designer.cs">
       <DependentUpon>Led.cs</DependentUpon>
     </Compile>
     <Compile Include="CRC16.cs" />
@@ -118,11 +112,11 @@
     <Compile Include="ChoosePDUs.Designer.cs">
       <DependentUpon>ChoosePDUs.cs</DependentUpon>
     </Compile>
-    <Compile Include="M9811-1.cs">
+    <Compile Include="M9538.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="M9811-1.Designer.cs">
-      <DependentUpon>M9811-1.cs</DependentUpon>
+    <Compile Include="M9538.Designer.cs">
+      <DependentUpon>M9538.cs</DependentUpon>
     </Compile>
     <Compile Include="GROUP.cs">
       <SubType>UserControl</SubType>
@@ -172,14 +166,11 @@
     <EmbeddedResource Include="ChoosePDUs.resx">
       <DependentUpon>ChoosePDUs.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Installer.resx">
-      <DependentUpon>Installer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Led.resx">
+    <EmbeddedResource Include="Data\Led.resx">
       <DependentUpon>Led.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="M9811-1.resx">
-      <DependentUpon>M9811-1.cs</DependentUpon>
+    <EmbeddedResource Include="M9538.resx">
+      <DependentUpon>M9538.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GROUP.resx">
@@ -197,6 +188,7 @@
     </Compile>
     <EmbeddedResource Include="OUTPUT.resx">
       <DependentUpon>OUTPUT.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Switch\Switch_Res.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -216,7 +208,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\EEprom.bmp" />

@@ -30,7 +30,6 @@ public:
   
   
   ErrorStatus GetStatus(Status_Msg_T& Status);
-  ErrorStatus DebugShutdown(FunctionalState val);
   ErrorStatus WriteToCB(uint8_t index,FunctionalState val);
   FlagStatus GetAlert() const;
   void AlertAcknoledge();
@@ -43,7 +42,7 @@ public:
   COMMAND_SUCCESS handleTripRest(Buffer& DataIn);
   COMMAND_SUCCESS handleSetBattle(Buffer& DataIn);
   COMMAND_SUCCESS handleSetLimit(Buffer& DataIn);
-  void handelGetOutsTemp(Buffer& DataOut);
+  void 			  handelGetOutsTemp(Buffer& DataOut);
 
   
   uint8_t CommStat;

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("M9811-1")]
+[assembly: AssemblyTitle("M538")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Milpower")]
-[assembly: AssemblyProduct("M9811-1")]
+[assembly: AssemblyProduct("M9538")]
 [assembly: AssemblyCopyright("Copyright ©Milpower 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

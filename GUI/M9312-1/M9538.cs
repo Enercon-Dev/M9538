@@ -24,7 +24,7 @@ using System.Text.RegularExpressions;
 using IPAddressControlLib;
 using System.Threading;
 
-namespace M9811_1
+namespace M9538
 {
     public partial class Form1 : Form
     {
@@ -44,7 +44,6 @@ namespace M9811_1
         private Dictionary<string,Component>[] LVPS_Outputs = new Dictionary<string, Component>[7];
         public BindingList<LimitDataSource> LimitData = new BindingList<LimitDataSource>();
         StreamWriter file = null;
-        Eth_Sub20 ChannelProgrammer = new Eth_Sub20();
 
 
 
@@ -964,7 +963,6 @@ namespace M9811_1
                     //msg.Type = 5;// program JEDEC
                     //msg.Send(ActivePDU);
 
-                    ChannelProgrammer.ProgramDevice(ActivePDU, Index_arr[i], textBox3.Text);
 
                 }
             }

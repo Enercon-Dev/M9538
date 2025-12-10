@@ -1,4 +1,4 @@
-﻿namespace M9811_1
+﻿namespace M9538
 {
     partial class GROUP
     {
@@ -37,7 +37,7 @@
             this.lblError = new System.Windows.Forms.Label();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnswitch = new M9811_1.Switch.Switch();
+            this.btnswitch = new Switch.Switch();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();

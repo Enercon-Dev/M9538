@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace M9811_1.Properties {
+namespace M9538.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

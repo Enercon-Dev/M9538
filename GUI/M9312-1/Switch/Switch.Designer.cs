@@ -1,5 +1,5 @@
 ﻿
-namespace M9811_1.Switch
+namespace Switch
 {
     public partial class Switch
     {

@@ -55,7 +55,7 @@ void Controller::SendStatus(CONTROL_OPCODE  op, uint8_t broadcast){
   }
   if (broadcast)
   {
-    const IPData& myIPData = SystemManagement::getCommunicationCenter().getIPData();
+   // const IPData& myIPData = SystemManagement::getCommunicationCenter().getIPData();
     //mUDPConnection.changeTargetIP((myIPData.mAddr & myIPData.mMask) | (~myIPData.mMask) );
     mUDPConnection.changeTargetIP(0xFFFFFFFF);
   }
@@ -152,7 +152,7 @@ uint8_t Controller::readBuffer()
   uint16_t Length;
   mBuffers.getInBuffer().readBlock((char *)&Length, 2);
   Length = ntohs(Length);
-  if (mBuffers.getInBuffer().getUnreadSize() < Length - 3)
+  if (mBuffers.getInBuffer().getUnreadSize() < (uint32_t)(Length - 3))
   {
     mBuffers.getInBuffer().advanceReadTop();
     mBuffers.getInBuffer().advanceRead(mBuffers.getInBuffer().getDataSize());
@@ -242,12 +242,18 @@ void Controller::handleGetPDUInfo( Buffer& DataOut ){
   
 }
 
+uint8_t TXBUFF[128];
+uint8_t RXBUFF[128];
+
 COMMAND_SUCCESS Controller::handleSetDebug(){
   uint16_t length = mBuffers.getInBuffer().readShort();
 
   static I2C_DRV* i2c = I2C_DRV::Get_Instance();
-  uint8_t indexToCB =  mBuffers.getInBuffer().readChar();
-  TxI2CMsg TxMsg;
+  uint8_t module;
+  uint8_t en;
+  uint8_t sadd;
+  uint8_t wrSize;
+  uint8_t RdSize;
   switch (mBuffers.getInBuffer().readChar())
   {
 
@@ -276,54 +282,71 @@ COMMAND_SUCCESS Controller::handleSetDebug(){
        mBuffers.getOutBuffer().writeChar(1);
        HardwareCenter::GetInstance().handelGetOutsTemp(mBuffers.getOutBuffer());
        return ACK;
-    //TODO: add more cases for I2C FPGA version update for all CBS
-  case 2 : // erase CB FPGA
+  case 2 : // Module Enable
 
+	  SystemManagement::MainMode = 1;
+	    module = mBuffers.getInBuffer().readChar();
+	    en = mBuffers.getInBuffer().readChar() != 0 ? 1 : 0;
+	    GPIO_WriteBit(SwOnPort[module],SwOnPin[module],en ? Bit_SET : Bit_RESET);
+
+
+      mBuffers.getOutBuffer().writeChar(module);
+      mBuffers.getOutBuffer().writeChar(en);
+	  return ACK;
+  case 3 : // Write and Read I2C
+	  SystemManagement::MainMode = 1;
 	  if (i2c == NULL)
-	 		  return NACK;
-
-	  HardwareCenter::GetInstance().DebugFlag = 1; // stop hardware periodic
-	  HardwareCenter::GetInstance().DebugShutdown(DISABLE);	   // Turn off all outputs
-	  HardwareCenter::GetInstance().WriteToCB(indexToCB, ENABLE); // enable selected output
-
-	  // send first erase command
-	  TxMsg.Address = mBuffers.getInBuffer().readChar();
-	  TxMsg.Length = mBuffers.getInBuffer().readChar();
-	  char* block;
-	  mBuffers.getInBuffer().readBlock(block,TxMsg.Length);
-	  TxMsg.pData = (const uint8_t*)block;
-	  i2c->SendMessage(&TxMsg);
-	  i2c->WaitBusy();
-	  return ACK;
-
-  case 3 :
-	  HardwareCenter::GetInstance().DebugFlag = 1; // stopping hardware periodic until programming is done
-
-	  if (i2c == NULL)
-	  	     return NACK;
-
-	  	  TxMsg.Address = 0x70 + indexToCB;
-	  	  TxMsg.Length = 1;
-	  	  TxMsg.pData = (const uint8_t*)0x7A;
-	  	  i2c->SendMessage(&TxMsg);
-		  i2c->WaitBusy();
-
-	  	  // wait 10 sec,--> power off --> wait 1 sec -- > power on
-	  return ACK;
-
-  case 4:
-
-	  HardwareCenter::GetInstance().WriteToCB(indexToCB, DISABLE); // enable selected output
-	  return ACK;
+	  	  	     return NACK;
+	  sadd = mBuffers.getInBuffer().readChar();
+	  wrSize = mBuffers.getInBuffer().readChar();
+	  RdSize = mBuffers.getInBuffer().readChar();
+      mBuffers.getOutBuffer().writeChar(sadd);
 
 
-  case 5: // write data from JEDEC file
+      if (RdSize == 0 && wrSize == 0)
+	  {
+    	  mBuffers.getOutBuffer().writeChar(0);
+    	  mBuffers.getOutBuffer().writeChar(0);
+    	  mBuffers.getOutBuffer().writeChar( I2C_DRV::Get_Instance()->PollAddress(sadd));
+	  }
+	  else if(RdSize == 0)
+	  {
+	  mBuffers.getInBuffer().readBlock((char *)TXBUFF, wrSize);
+	  mBuffers.getInBuffer().advanceRead(wrSize);
+		TxI2CMsg msg = { sadd , TXBUFF, wrSize };
+		I2C_DRV::Get_Instance()->SendMessage(&msg);
+		while (I2C_DRV::Get_Instance()->IsBusy() == SET);
+  	  mBuffers.getOutBuffer().writeChar(wrSize);
+	  mBuffers.getOutBuffer().writeChar(0);
+	  mBuffers.getOutBuffer().writeChar(I2C_DRV::Get_Instance()->I2C_Last_Error);
+	  }
+	  else if (wrSize == 0)
+	  {
+		uint32_t time;
+		RxI2CMsg msg = { sadd , RXBUFF, RdSize, &time };
+		I2C_DRV::Get_Instance()->RequestMessage(&msg);
+		while (I2C_DRV::Get_Instance()->IsBusy() == SET);
+		mBuffers.getOutBuffer().writeChar(0);
+		mBuffers.getOutBuffer().writeChar(RdSize);
+		mBuffers.getOutBuffer().writeChar(I2C_DRV::Get_Instance()->I2C_Last_Error);
+		mBuffers.getOutBuffer().writeBlock(RXBUFF, RdSize);
+	  }
+	  else
+	  {
+		uint32_t time;
+		mBuffers.getInBuffer().readBlock((char *)TXBUFF, wrSize);
+			  mBuffers.getInBuffer().advanceRead(wrSize);
 
-	  HardwareCenter::GetInstance().WriteToCB(indexToCB, ENABLE); // enable selected output
-
-
-	  HardwareCenter::GetInstance().DebugFlag = 0; // restoring hardware periodic
-	  return ACK;
+		TxI2CMsg msg1 = { sadd , TXBUFF, wrSize };
+		RxI2CMsg msg2 = { sadd , RXBUFF, RdSize, &time };
+		I2C_DRV::Get_Instance()->SendRequestMessage(&msg1, &msg2);
+		while (I2C_DRV::Get_Instance()->IsBusy() == SET);
+		mBuffers.getOutBuffer().writeChar(wrSize);
+				mBuffers.getOutBuffer().writeChar(RdSize);
+				mBuffers.getOutBuffer().writeChar(I2C_DRV::Get_Instance()->I2C_Last_Error);
+				mBuffers.getOutBuffer().writeBlock(RXBUFF, RdSize);
+	  }
+      return ACK;
 
 
   default:
