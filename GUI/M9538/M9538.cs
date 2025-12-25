@@ -44,6 +44,8 @@ namespace M9538
         private Dictionary<string,Component>[] LVPS_Outputs = new Dictionary<string, Component>[7];
         public BindingList<LimitDataSource> LimitData = new BindingList<LimitDataSource>();
         StreamWriter file = null;
+        SlaveUpdate SlaveCalibForm = null;
+
 
 
 
@@ -63,58 +65,6 @@ namespace M9538
             OUTPUT.OUTList.Find(x => x.OUT_ID == 7).OutLabel = Properties.Labels.Default.Label7;
             OUTPUT.OUTList.Find(x => x.OUT_ID == 8).OutLabel = Properties.Labels.Default.Label8;
 
-            while (MyIP == null)
-            {
-                NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-                foreach (NetworkInterface adapter in nics)
-                {
-                    // Only display informatin for interfaces that support IPv4.
-                    if (adapter.Supports(NetworkInterfaceComponent.IPv4) == false)
-                    {
-                        continue;
-                    }
-
-                    if (adapter.NetworkInterfaceType != NetworkInterfaceType.Ethernet)
-                        continue;
-
-                    IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
-                    // Try to get the IPv4 interface properties.
-                    IPv4InterfaceProperties p = adapterProperties.GetIPv4Properties();
-
-                    if (p == null)
-                        continue;
-                    if (p.IsDhcpEnabled == true)
-                        continue;
-                    foreach (IPAddress ip in adapterProperties.UnicastAddresses.Select(x => x.Address))
-                    {
-                        if (ip.AddressFamily == AddressFamily.InterNetwork)
-                        {
-                            this.MyIP = ip;
-#pragma warning disable CS0618 // Type or member is obsolete
-                            BrodcastIP = new IPAddress(ip.Address | 0xFF000000);
-#pragma warning restore CS0618 // Type or member is obsolete
-                            m_adapter = adapter;
-                            break;
-                        }
-                    }
-                    if (MyIP != null)
-                        break;
-
-                }
-                if (MyIP == null)
-                    MessageBox.Show("No Static Network Interface Found");
-            }
-
-            this.m_TftpServer = new TftpServer(MyIP);
-            //
-            // TFTP
-            this.m_TftpServer.OnReadRequest += new TftpServerEventHandler(this.server_OnReadRequest);
-            this.m_TftpServer.OnError += new TftpServerErrorHandler(this.server_OnError);
-            this.m_TftpServer.OnWriteRequest += new TftpServerEventHandler(this.server_OnWriteRequest);
-            //
-            FilterServer = new TSimpleServer(MyIP);
-            ActivePDU =  new PDU();
-            Data.Message.SendInterface = FilterServer.Send;
         }
 
         private void ActiveFilter_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -272,6 +222,37 @@ namespace M9538
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            while (true)
+            {
+                ChooseNic dlg = new ChooseNic();
+                dlg.NICs = NetworkInterface.GetAllNetworkInterfaces();
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    MyIP = dlg.ChosenIP;
+                    m_adapter = dlg.ChosenNIC;
+                    break;
+                }
+
+                DialogResult rs = MessageBox.Show("No Static Network Interface Found", "Error", MessageBoxButtons.RetryCancel);
+                if (rs == DialogResult.Cancel)
+                {
+                    Close();
+                    return;
+                }
+
+            }
+
+            FilterServer = new TSimpleServer(MyIP);
+            this.m_TftpServer = new TftpServer(MyIP);
+            //
+            // TFTP
+            this.m_TftpServer.OnReadRequest += new TftpServerEventHandler(this.server_OnReadRequest);
+            this.m_TftpServer.OnError += new TftpServerErrorHandler(this.server_OnError);
+            this.m_TftpServer.OnWriteRequest += new TftpServerEventHandler(this.server_OnWriteRequest);
+            //
+            ActivePDU = new PDU();
+            Data.Message.SendInterface = FilterServer.Send;
+
             string path = "C:\\Logs\\" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".csv";
             file = new StreamWriter(path, false, Encoding.ASCII);
             textBox1.Text = path;
@@ -966,6 +947,13 @@ namespace M9538
 
                 }
             }
+        }
+
+        private void menuItem5_Click(object sender, EventArgs e)
+        {
+            SlaveCalibForm = new SlaveUpdate(ActivePDU);
+            SlaveCalibForm.ShowDialog();
+            SlaveCalibForm = null;
         }
     }
 }

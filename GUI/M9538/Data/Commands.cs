@@ -937,38 +937,8 @@ namespace Data
         {
 
         }
-        public byte CbToProgram
-        {
-            set => SetToBody(value, 1);
-        }
-        public byte Type //0- SN, 1 - Slave Calibration, 2,3,4 CB firmware
-        {
-            set => SetToBody(value,2);
-        }
-
-        public byte I2C_SlaveAddress
-        {
-            set => SetToBody(value, 3);
-        }
 
 
-        public byte I2C_MemoryAddress
-        {
-            set => SetToBody(value, 4);
-
-        }
-
-
-        public byte I2C_MemoryAddressSize
-        {
-            set => SetToBody(value, 5);
-        }
-
-        public byte[] I2C_Data
-        {
-           set=> SetToBody(value, 0, 1, 4);
-
-        }
         public string SN
         {
             
@@ -1019,16 +989,38 @@ namespace Data
                 decimal[] val = new decimal[NUM_OF_CB];
                 if (Length != 20 || Body[0] != 1)
                     return val;
-                for (int i =0; i< NUM_OF_CB; i++)
+                for (int i = 0; i < NUM_OF_CB; i++)
                 {
-                    val[i] = BitConverter.ToInt16(Body.Skip(1 + i * 2).Take(2).Reverse().ToArray(), 0)/((decimal)16.0);
+                    val[i] = BitConverter.ToInt16(Body.Skip(1 + i * 2).Take(2).Reverse().ToArray(), 0) / ((decimal)16.0);
                 }
                 return val;
             }
         }
 
-        
+        internal void set_I2C_Write(byte sadd, byte[] data)
+        {
+            
+            data = new byte[4] { 3, sadd, (byte)data.Count(), 0 }.Concat(data).ToArray();
+            Length = data.Count() + 3;
+            Body = data;
+        }
 
+        internal void set_I2C_Transfer(byte sadd, byte[] wrData, byte read_size)
+        {
+            byte[] data = new byte[4] { 3, sadd, (byte)wrData.Count(), read_size }.Concat(wrData).ToArray();
+            Length = data.Count() + 3;
+            Body = data;
+        }
+
+        internal void Module_On(byte activeChannel, P_Enable enable)
+        {
+            byte[] data = new byte[3] { 2, activeChannel, (byte)enable }.ToArray();
+            Length = 6;
+            Body = data;
+        }
+
+        public uint I2cResult { get; internal set; }
+        public byte[] RecvdData { get => Body.Skip(4).Take(Body[2]).ToArray(); }
     }
       
     public class SW_Info : Message
