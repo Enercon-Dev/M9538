@@ -20,6 +20,7 @@
 // **********************************************************************
 
 SystemManagement SystemManagement::mGlobalManagement;
+uint8_t SystemManagement::MainMode = 0;
 
 // **********************************************************************
 // **********************************************************************
@@ -45,6 +46,7 @@ SystemManagement::SystemManagement() :
 void SystemManagement::init()
 {
 
+	SystemManagement::MainMode = 0;
   stm32SystemInit();
  
   // persistent data must be loaded after the stm32 initialization, but before 

@@ -50,7 +50,7 @@ constexpr double ADC_Inputs_Constants[ADC_Number_Of_Inputs] = {1, 0.393, 0.393};
 #define ADC_TEMP_Pin 1
 #define ADC_VIN_Pin  0
 
-static uint8_t RequestVoltage[] = {0};
+//static uint8_t RequestVoltage[] = {0};
 
 class ADC_DRV {
 public:

@@ -17,7 +17,7 @@ HardwareCenter::HardwareCenter():DebugFlag(0), CommStat(0), OverTemp(FunctionalS
 
 void HardwareCenter::periodicCall(){
   
-	if(DebugFlag == 1)
+	if(SystemManagement::MainMode == 1)
 		return;
 
   int16_t Temp = ADC.Get_ADC_Specific_Input_Data(ADC_Inputs_Enum::ADC_In_Temp);
@@ -269,13 +269,4 @@ COMMAND_SUCCESS HardwareCenter::IsValidOutputNumber(uint8_t group)
   return is_legal_input;
 }
 
-ErrorStatus HardwareCenter::DebugShutdown(FunctionalState val)
-{
-	 for (int i=0; i< NUM_OF_CBS; ++i)
-	        CB_Int::Select(i)->Power(FunctionalState::DISABLE);
-}
 
-ErrorStatus HardwareCenter::WriteToCB(uint8_t index, FunctionalState val)
-{
-    CB_Int::Select(index)->Power(val);
-}

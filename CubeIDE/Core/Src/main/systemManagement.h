@@ -80,6 +80,7 @@ public:
       {return mGlobalManagement.mPersistentDataCenter;}
  // static HardwareCenter& getHardwareCenter()
    //   {return *(mGlobalManagement.mHardwareCenter);}
+  static uint8_t MainMode;
 
 private:
   void tryPriority0Actions();

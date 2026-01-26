@@ -29,21 +29,24 @@
            (PERSISTENT_SECTION_BASE + (var * FLASH_BLOCK_SIZE))
 
 
-#ifndef DASH_NUMBER
-#define DASH_NUMBER 102
-#endif
+//#ifndef DASH_NUMBER
+//#define DASH_NUMBER 102
+//#endif
 
 #if (DASH_NUMBER == 100)
-  #define PERSISTENT_VERSION "20211014_001.000.000"
+	#define PERSISTENT_VERSION "20251212_100.000.000"
+	#define CUSTOMER_PN         "M9538-100.-"
 #elif (DASH_NUMBER == 101)
-  #define PERSISTENT_VERSION "20231212_001.000.001"
+	#define PERSISTENT_VERSION "20251212_101.000.001"
+	#define CUSTOMER_PN         "M9538-101.-"
 #elif (DASH_NUMBER == 102)
-  #define PERSISTENT_VERSION "20231212_001.000.002"
+	#define PERSISTENT_VERSION "20231212_102.000.002"
+	#define CUSTOMER_PN         "M9538-102.-"
 #endif
 
 #define PERSISTENT_MAGIC_NUM "M9811-1 SW a"
-#define PERSISTENT_VERSION "20230223_001.000.000"
-#define CUSTOMER_PN         "M9538-1.-"
+//#define PERSISTENT_VERSION "20230223_001.000.000"
+//#define CUSTOMER_PN         "M9538-1.-"
 
 // a single block holding all unchangable data, such as MAC address.
 #define PERSISTENT_DATA_STATIC_BLOCK_A            (0)
