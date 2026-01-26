@@ -254,7 +254,7 @@ namespace M9538
             Data.Message.SendInterface = FilterServer.Send;
 
             string path = "C:\\Logs\\" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".csv";
-            file = new StreamWriter(path, false, Encoding.ASCII);
+            //file = new StreamWriter(path, false, Encoding.ASCII);
             textBox1.Text = path;
             hiddenPage = tabControl.TabPages["tpDHCP"];
             lbDHCPTrace.DisplayMember = "Msg";
@@ -307,7 +307,7 @@ namespace M9538
 
         private void Update_filters(byte[] Message, EndPoint client)
         {
-            file.WriteLine(string.Join("", Message.Select(x => x.ToString("X")).ToArray()));
+            //file.WriteLine(string.Join("", Message.Select(x => x.ToString("X")).ToArray()));
             if ( !PDUs.Any( x => x.IP.Equals(((IPEndPoint)client).Address))){
                 PDUs.Add(new PDU( ((IPEndPoint)client).Address));
                 PDUs.Last().PropertyChanged += ActiveFilter_PropertyChanged;
@@ -533,21 +533,30 @@ namespace M9538
                 new PDU_Info().Get(ActivePDU);
             }
         }
-
+        DateTime last_tick = DateTime.Now;
         private void Updater_Tick(object sender, EventArgs e)
         {
-
-            if (PDUs.RemoveAll(x => (DateTime.Now - x.LastUpdated).TotalSeconds > 6) > 0)
+            //PDUs.Select(x => x.IP).Select(x => { FilterServer.Send(new byte[3] { 0x1, 0x2, 0x3 }, new IPEndPoint(x, 5000)); return 0; });
+            if (PDUs.Any(x => (DateTime.Now - x.LastUpdated).TotalSeconds > 3))
             {
-                UpdateData = true;
-                if (!PDUs.Contains(ActivePDU))
-                    led1.Status = Led_Type.OFF;
-                UpdateTopologyDiagram();
+                FilterServer.Refresh();
             }
+            if (DateTime.Now - last_tick < TimeSpan.FromSeconds(3))
+            {
+                if (PDUs.RemoveAll(x => (DateTime.Now - x.LastUpdated).TotalSeconds > 6) > 0)
+                {
+                    UpdateData = true;
+                    if (!PDUs.Contains(ActivePDU))
+                        led1.Status = Led_Type.OFF;
+                    UpdateTopologyDiagram();
+                }
+            }
+            last_tick = DateTime.Now;
             if (UpdateData == false) return;
             UpdateData = false;
 
             if (ActivePDU == null) return;
+            if (SlaveCalibForm != null) return;
             new Set_Debug().GetOutputTemp(ActivePDU);
             
 
@@ -669,6 +678,7 @@ namespace M9538
         {
             tmrGetStatus.Stop();
             new Status().Get(ActivePDU);
+            if (SlaveCalibForm != null) return;
             new PDU_Info().Get(ActivePDU);
             new Config().Get(ActivePDU);
         }
@@ -952,6 +962,7 @@ namespace M9538
         private void menuItem5_Click(object sender, EventArgs e)
         {
             SlaveCalibForm = new SlaveUpdate(ActivePDU);
+            ActivePDU.slaveForm = SlaveCalibForm;
             SlaveCalibForm.ShowDialog();
             SlaveCalibForm = null;
         }

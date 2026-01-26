@@ -1019,8 +1019,9 @@ namespace Data
             Body = data;
         }
 
-        public uint I2cResult { get; internal set; }
-        public byte[] RecvdData { get => Body.Skip(4).Take(Body[2]).ToArray(); }
+        public uint I2cResult { get => Body[4]; }
+        public byte[] RecvdData { get => Body.Skip(5).Take(Body[3]).ToArray(); }
+        public byte Type { get => Body[0]; }
     }
       
     public class SW_Info : Message

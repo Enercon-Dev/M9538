@@ -285,13 +285,21 @@ COMMAND_SUCCESS Controller::handleSetDebug(){
   case 2 : // Module Enable
 
 	  SystemManagement::MainMode = 1;
+	    mBuffers.getOutBuffer().writeChar(CONTROL_OPCODE_DEBUG_ACK);
+	    mBuffers.getOutBuffer().writeChar(0);
+	    mBuffers.getOutBuffer().writeChar(6);
+	    mBuffers.getOutBuffer().writeChar(2);
 	    module = mBuffers.getInBuffer().readChar();
+	    if (module >= NUM_OF_CBS)
+	    {
+		    mBuffers.getOutBuffer().writeChar(0xFF);
+		    mBuffers.getOutBuffer().writeChar(0);
+		    return NACK;
+	    }
 	    en = mBuffers.getInBuffer().readChar() != 0 ? 1 : 0;
 	    GPIO_WriteBit(SwOnPort[module],SwOnPin[module],en ? Bit_SET : Bit_RESET);
-
-
-      mBuffers.getOutBuffer().writeChar(module);
-      mBuffers.getOutBuffer().writeChar(en);
+	    mBuffers.getOutBuffer().writeChar(module);
+	    mBuffers.getOutBuffer().writeChar(en);
 	  return ACK;
   case 3 : // Write and Read I2C
 	  SystemManagement::MainMode = 1;
@@ -300,6 +308,9 @@ COMMAND_SUCCESS Controller::handleSetDebug(){
 	  sadd = mBuffers.getInBuffer().readChar();
 	  wrSize = mBuffers.getInBuffer().readChar();
 	  RdSize = mBuffers.getInBuffer().readChar();
+	  mBuffers.getOutBuffer().writeChar(CONTROL_OPCODE_DEBUG_ACK);
+	  mBuffers.getOutBuffer().writeShort(RdSize + 8);
+	  mBuffers.getOutBuffer().writeChar(3);
       mBuffers.getOutBuffer().writeChar(sadd);
 
 
@@ -315,7 +326,7 @@ COMMAND_SUCCESS Controller::handleSetDebug(){
 	  mBuffers.getInBuffer().advanceRead(wrSize);
 		TxI2CMsg msg = { sadd , TXBUFF, wrSize };
 		I2C_DRV::Get_Instance()->SendMessage(&msg);
-		while (I2C_DRV::Get_Instance()->IsBusy() == SET);
+		I2C_DRV::Get_Instance()->WaitBusy();
   	  mBuffers.getOutBuffer().writeChar(wrSize);
 	  mBuffers.getOutBuffer().writeChar(0);
 	  mBuffers.getOutBuffer().writeChar(I2C_DRV::Get_Instance()->I2C_Last_Error);
@@ -325,7 +336,7 @@ COMMAND_SUCCESS Controller::handleSetDebug(){
 		uint32_t time;
 		RxI2CMsg msg = { sadd , RXBUFF, RdSize, &time };
 		I2C_DRV::Get_Instance()->RequestMessage(&msg);
-		while (I2C_DRV::Get_Instance()->IsBusy() == SET);
+		I2C_DRV::Get_Instance()->WaitBusy();
 		mBuffers.getOutBuffer().writeChar(0);
 		mBuffers.getOutBuffer().writeChar(RdSize);
 		mBuffers.getOutBuffer().writeChar(I2C_DRV::Get_Instance()->I2C_Last_Error);
@@ -340,7 +351,7 @@ COMMAND_SUCCESS Controller::handleSetDebug(){
 		TxI2CMsg msg1 = { sadd , TXBUFF, wrSize };
 		RxI2CMsg msg2 = { sadd , RXBUFF, RdSize, &time };
 		I2C_DRV::Get_Instance()->SendRequestMessage(&msg1, &msg2);
-		while (I2C_DRV::Get_Instance()->IsBusy() == SET);
+		I2C_DRV::Get_Instance()->WaitBusy();
 		mBuffers.getOutBuffer().writeChar(wrSize);
 				mBuffers.getOutBuffer().writeChar(RdSize);
 				mBuffers.getOutBuffer().writeChar(I2C_DRV::Get_Instance()->I2C_Last_Error);

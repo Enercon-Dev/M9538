@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.Net.NetworkInformation;
 using System.ComponentModel;
 using System;
+using M9538;
 
 namespace Data
 {
@@ -47,6 +48,7 @@ namespace Data
         public TimeSpan             CommlossTimeout;
         public Message.P_Enable[]   CommlossOperation;
         public decimal[]            CurrentLimitSetting;
+        internal SlaveUpdate slaveForm;
         public decimal[]            OverloadSetting;
         public TimeSpan[]           ThermalConstSetting;
         public int[]                Conf_Channel_Group = new int[] { 255, 255, 255, 255, 255, 255, 255, 255 };
@@ -194,8 +196,18 @@ namespace Data
                     else
                     {
                         Set_Debug nDbg = new Set_Debug(massage);
-                        OutputTemp = nDbg.OutputTemp;
-                        NotifyPropertyChanged("DebugTemp");
+                        switch (nDbg.Type)
+                        {
+                            case 1:
+                                OutputTemp = nDbg.OutputTemp;
+                                NotifyPropertyChanged("DebugTemp");
+                                break;
+                            default:
+                                slaveForm.InsertMsg(nDbg.ToByteArray());
+                                break;
+
+                        }
+                        
                     }
                     break;
                 case OpCodeTable.SET_LIMIT_ACK:

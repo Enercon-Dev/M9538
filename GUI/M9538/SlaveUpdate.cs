@@ -125,8 +125,15 @@ namespace M9538
                 Data.Set_Debug msg = new Set_Debug();
                 msg.Module_On(activeChannel, P_Enable.Enable);
                 SC.Send(status => msg.Send(m_activePDU), null);
-                if (!m_recieved_flag.WaitOne(1000))
+                if (!m_recieved_flag.WaitOne())//1000))
                     SC.Send(status => PrintToLb("time out turning on module"), null);
+                if (!Recieved_Message.Body.SequenceEqual(msg.Body))
+                {
+                    SC.Send(status => PrintToLb("failed enabling the module"), null);
+                    SC.Send(status => pbList[(int)activeChannel].Value = 0, null);
+                    SC.Send(status => pbList[(int)activeChannel].BackColor = Color.Red, null);
+                    continue;
+                }
                 Thread.Sleep(1000);
                 byte[] Data_wr = new byte[1] { 0xDD };
                 CBRawI2C.I2C_Write(m_slave_add, 0x70, 1, Data_wr);
@@ -136,12 +143,12 @@ namespace M9538
                 Thread.Sleep(10000);
                 msg.Module_On(activeChannel, P_Enable.Disable);
                 SC.Send(status => msg.Send(m_activePDU), null);
-                if (!m_recieved_flag.WaitOne(1000))
+                if (!m_recieved_flag.WaitOne())//1000))
                     SC.Send(status => PrintToLb("time out turning off module"), null);
                 Thread.Sleep(1000);
                 msg.Module_On(activeChannel, P_Enable.Enable);
                 SC.Send(status => msg.Send(m_activePDU), null);
-                if (!m_recieved_flag.WaitOne(1000))
+                if (!m_recieved_flag.WaitOne())//1000))
                     SC.Send(status => PrintToLb("time out turning on module"), null);
                 Thread.Sleep(100);
                 bool res = prg.Program(0x012B2043, new StreamReader(tbFileName.Text));
@@ -152,7 +159,7 @@ namespace M9538
                 }
                 msg.Module_On(activeChannel, P_Enable.Disable);
                 SC.Send(status => msg.Send(m_activePDU), null);
-                if (!m_recieved_flag.WaitOne(1000))
+                if (!m_recieved_flag.WaitOne())//1000))
                     SC.Send(status => PrintToLb("time out turning off module"), null);
                 SC.Send(status => PrintToLb("Finished Ch number " + activeChannel.ToString()), null);
                 Thread.Sleep(100);
@@ -184,6 +191,27 @@ namespace M9538
         {
             if (prg == null) return;
             pbList[(int)activeChannel].Value = (int)prg.ProgramState;
+        }
+
+        internal void InsertMsg(byte[] Raw)
+        {
+            
+            byte opcode = Raw[3];
+            switch (opcode)
+            {
+                case 2:
+                    Recieved_Message = new Data.Message(Raw);
+                    m_recieved_flag.Set();
+                    break;
+                case 3:
+                    CBRawI2C.RecievedMsg = new Data.Message(Raw);
+                    CBRawI2C.RecievedI2C.Set();
+                    break;
+                default:
+                    break;
+
+
+            }
         }
     }
 }

@@ -35,8 +35,8 @@ namespace M9538
             byte wrLen = (byte)data.Count();
             Data.Set_Debug msg = new Set_Debug();
             msg.set_I2C_Write((byte)sadd, data);
-            msg.Send(m_activePDU);
-            if (!RecievedI2C.WaitOne(1000)) return false;
+            SC.Send(status => msg.Send(m_activePDU), null);
+            if (!RecievedI2C.WaitOne())/*1000))*/ return false;
             LastStatus = new Data.Set_Debug(RecievedMsg).I2cResult;
             if (LastStatus != 0) return false;
             return true;
@@ -48,8 +48,8 @@ namespace M9538
             RecievedI2C.Reset();
             Data.Set_Debug msg = new Set_Debug();
             msg.set_I2C_Transfer((byte)sadd, WrData, (byte)RdData.Count());
-            msg.Send(m_activePDU);
-            if (!RecievedI2C.WaitOne(1000)) return false;
+            SC.Send(status => msg.Send(m_activePDU), null);
+            if (!RecievedI2C.WaitOne())/*1000))*/ return false;
             LastStatus = new Data.Set_Debug(RecievedMsg).I2cResult;
             if (LastStatus != 0) return false;
             new Data.Set_Debug(RecievedMsg).RecvdData.CopyTo(RdData, 0);

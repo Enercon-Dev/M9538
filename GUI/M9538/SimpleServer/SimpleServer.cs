@@ -95,6 +95,16 @@ namespace SimpleServer
             serverEruptSocket.Open();
         }
 
+        public void Refresh()
+        {
+            serverResponseSocket.RemoteEndpoint = new IPEndPoint(IPAddress.Parse("255.255.255.255"), 5050);
+            serverResponseSocket.Send(System.Text.Encoding.ASCII.GetBytes("Hello!!"));
+            serverKeepAliveSocket.RemoteEndpoint = new IPEndPoint(IPAddress.Parse("255.255.255.255"), 5050);
+            serverKeepAliveSocket.Send(System.Text.Encoding.ASCII.GetBytes("Hello!!"));
+            serverEruptSocket.RemoteEndpoint = new IPEndPoint(IPAddress.Parse("255.255.255.255"), 5050);
+            serverEruptSocket.Send(System.Text.Encoding.ASCII.GetBytes("Hello!!"));
+        }
+
         public void Send(byte[] message, EndPoint endpoint)
         {
             serverResponseSocket.RemoteEndpoint = endpoint;
