@@ -30,7 +30,7 @@
 
 
 #ifndef DASH_NUMBER
-#define DASH_NUMBER 803 // 100 OR 101 OR 102
+#define DASH_NUMBER 100 // 100 OR 101 OR 102
 #endif
 
 #if (DASH_NUMBER == 100)
