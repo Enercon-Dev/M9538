@@ -41,7 +41,10 @@ const uint16_t SwOnPin[NUM_OF_CBS]              = { SW_ON1_Pin, SW_ON2_Pin, SW_O
   const uint16_t output_max_overload_current[8]    = {(uint16_t)(5*16), 5*16, 25*16, (uint16_t)(5*16), 5*16, 5*16, 5*16, 5*16};
 #elif (DASH_NUMBER == 102)
   const uint16_t output_max_overload_current[8]    = {(uint16_t)(30*16), 30*16, 30*16, (uint16_t)(15*16), 15*16, 15*16, 15*16, 15*16};
+#elif (DASH_NUMBER == 803)
+  const uint16_t output_max_overload_current[8]    = {(uint16_t)(25*16), 25*16, 25*16, (uint16_t)(15*16), 15*16, 15*16, 15*16, 5*16};
 #endif
+
 #pragma pack(push)
 #pragma pack(1)
 typedef enum{CB_CONTROL_DIS =0, CB_CONTROL_EN= 1, CB_CONTROL_TRIPRST = 2}CB_En_t;

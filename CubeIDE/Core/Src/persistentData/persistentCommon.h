@@ -29,9 +29,9 @@
            (PERSISTENT_SECTION_BASE + (var * FLASH_BLOCK_SIZE))
 
 
-//#ifndef DASH_NUMBER
-//#define DASH_NUMBER 102
-//#endif
+#ifndef DASH_NUMBER
+#define DASH_NUMBER 803 // 100 OR 101 OR 102
+#endif
 
 #if (DASH_NUMBER == 100)
 	#define PERSISTENT_VERSION "20251212_100.000.000"
@@ -42,6 +42,9 @@
 #elif (DASH_NUMBER == 102)
 	#define PERSISTENT_VERSION "20231212_102.000.002"
 	#define CUSTOMER_PN         "M9538-102.-"
+#elif (DASH_NUMBER == 803)
+	#define PERSISTENT_VERSION "20231212_803.000.001"
+	#define CUSTOMER_PN         "M9539-803.-"
 #endif
 
 #define PERSISTENT_MAGIC_NUM "M9811-1 SW a"
